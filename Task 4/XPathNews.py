@@ -5,12 +5,33 @@
 3. ссылку на новость;
 4. дата публикации.
 Сложить собранные данные в БД
-Минимум один сайт, максимум - все три """
-from datetime import datetime
+Минимум один сайт, максимум - все три"""
+import datetime
 from lxml import html
 import requests
 import hashlib
 import NewsMongo as db
+
+
+def month_converter(date):
+    months = {
+      'января': "jan",
+      'февраля': "feb",
+      'марта': "mar",
+      'апреля': "apr",
+      'мая': "may",
+      'июня': "jun",
+      'июля': "jul",
+      'августа': "aug",
+      'сентября': "sep",
+      'октября': "oct",
+      'ноября': "nov",
+      'декабря': "dec"
+    }
+    for key, value in months.items():
+        date = date.replace(key, str(value))
+
+    return date
 
 
 def lenta_news():
@@ -30,7 +51,6 @@ def lenta_news():
 
     for item in items:
         news_item = {}
-        id = 0
         source = 'lenta.ru'
         xp = ".//a[contains(@href, 'news')]"
 
@@ -41,7 +61,7 @@ def lenta_news():
         news_item["source"] = source
         news_item["name"] = name.replace("\xa0", " ")
         news_item["link"] = link
-        news_item["date"] = date
+        news_item["date"] = datetime.datetime.strptime(month_converter(date), "%I:%M, %d %b %Y")
         news_item["_id"] = hashlib.sha1(str(news_item).encode()).hexdigest()
 
         news.append(news_item)
@@ -49,4 +69,35 @@ def lenta_news():
     return news
 
 
-db.insert_news(lenta_news())
+def yandex_news():
+    header = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
+                      "Chrome/92.0.4515.107 Safari/537.36"
+    }
+    main_link = "https://yandex.ru/news"
+    response = requests.get(main_link, headers=header)
+
+    dom = html.fromstring(response.text)
+
+    items = dom.xpath("//a[contains(@href, 'rubric=politics') and @class='mg-card__link']/ancestor::article")
+
+    news = []
+
+    for item in items:
+        news_item = {}
+        source = item.xpath(".//a[contains(@class, 'source-link')]/text()")[0]
+        name = item.xpath(".//h2/text()")[0]
+        link = item.xpath(".//a[@class='mg-card__link']/@href")[0]
+        time = datetime.datetime.strptime(item.xpath(".//span[contains(@class, 'time')]/text()")[0], "%H:%M")
+        news_item["source"] = source
+        news_item["name"] = name.replace("\xa0", " ")
+        news_item["link"] = link
+        news_item["date"] = datetime.datetime.now().replace(hour=time.hour, minute=time.minute)
+        news_item["_id"] = hashlib.sha1(str(news_item).encode()).hexdigest()
+        news.append(news_item)
+
+    return news
+
+
+# db.insert_news(lenta_news())
+# db.insert_news(yandex_news())
