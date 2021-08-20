@@ -61,7 +61,7 @@ def lenta_news():
         news_item["source"] = source
         news_item["name"] = name.replace("\xa0", " ")
         news_item["link"] = link
-        news_item["date"] = datetime.datetime.strptime(month_converter(date), "%I:%M, %d %b %Y")
+        news_item["date"] = datetime.datetime.strptime(month_converter(date), "%H:%M, %d %b %Y")
         news_item["_id"] = hashlib.sha1(str(news_item).encode()).hexdigest()
 
         news.append(news_item)
