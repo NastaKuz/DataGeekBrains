@@ -7,18 +7,16 @@ from Task6.booksparser.items import BooksparserItem
 class Book24Spider(scrapy.Spider):
     name = 'book24'
     allowed_domains = ['book24.ru']
-    start_urls = ['https://book24.ru/knigi-bestsellery/']
-    # start_urls = ['https://book24.ru/product/rota-virusov-i-batalon-bakteriy-kniga-o-detskikh-infektsiyakh-6016505/']
+    start_urls = ['https://book24.ru/novie-knigi/']
     page_counter = 1
 
     def parse(self, response: HtmlResponse):
         if response.status == 200:
             links = response.xpath("//a[contains(@class, 'product-card__name')]/@href")
             self.page_counter += 1
-            next_page = f'https://book24.ru/knigi-bestsellery/page-{self.page_counter}/'
+            next_page = f'https://book24.ru/novie-knigi/page-{self.page_counter}/'
 
-            if self.page_counter < 2:
-                yield response.follow(next_page, callback=self.parse)
+            yield response.follow(next_page, callback=self.parse)
 
             for link in links:
                 yield response.follow(link, callback=self.book_parse)

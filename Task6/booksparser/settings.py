@@ -1,4 +1,4 @@
-# Scrapy settings for booksparser project
+# Scrapy settings for leroyparser project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -47,13 +47,13 @@ COOKIES_ENABLED = True
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'booksparser.middlewares.BooksparserSpiderMiddleware': 543,
+#    'leroyparser.middlewares.BooksparserSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'booksparser.middlewares.BooksparserDownloaderMiddleware': 543,
+#    'leroyparser.middlewares.BooksparserDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions

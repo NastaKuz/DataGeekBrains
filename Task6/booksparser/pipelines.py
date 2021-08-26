@@ -19,11 +19,12 @@ class BooksparserPipeline:
 
     def process_item(self, item, spider):
         item['title'] = item['title'].replace("\n", "").strip()
-        item['author'] = item['author'].replace("\n", "").strip()
+        if item['author'] is not None:
+            item['author'] = item['author'].replace("\n", "").strip()
         if item['main_price'] is not None:  # если нет в наличии, то цены нет
-            item['main_price'] = float(re.findall(r'\d+', item['main_price'])[0])
+            item['main_price'] = float(re.findall(r'\d+', item['main_price'].replace(",", ""))[0])
         if item['discount_price'] is not None:
-            item['discount_price'] = float(re.findall(r'\d+', item['discount_price'])[0])
+            item['discount_price'] = float(re.findall(r'\d+', item['discount_price'].replace(",", ""))[0])
             item['main_price'], item['discount_price'] = item['discount_price'], item['main_price']
         item['rating'] = float(item['rating'].replace("\n", "").replace(',', '.').strip())
 
